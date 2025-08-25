@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TaskManagerAPI.Data;
 using TaskManagerAPI.Models;
@@ -17,12 +18,14 @@ namespace TaskManagerAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetUsers()
         {
             return Ok(_context.Users.ToList());
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetUsers(int id)
         {
             var user = await _context.Users.FindAsync(id);
@@ -35,6 +38,7 @@ namespace TaskManagerAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateUser(User user)
         {
             _context.Users.Add(user);
@@ -43,6 +47,7 @@ namespace TaskManagerAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> UpdateUser(int id, User updateUser) 
         {
             var user = await _context.Users.FindAsync(id);
@@ -51,9 +56,9 @@ namespace TaskManagerAPI.Controllers
                 return NotFound(new { message = "User not found" });
             }
 
-            if (!string.IsNullOrEmpty(updateUser.UserName))
+            if (!string.IsNullOrEmpty(updateUser.Username))
             {
-                user.UserName = updateUser.UserName;
+                user.Username = updateUser.Username;
             }
             if (!string.IsNullOrEmpty(updateUser.Email))
             {
@@ -70,6 +75,7 @@ namespace TaskManagerAPI.Controllers
         }
         
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteUserAsync(int id) 
         {
             var user = await _context.Users.FindAsync(id);
@@ -82,7 +88,7 @@ namespace TaskManagerAPI.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = $"User {user.UserName} deleted successfully" });
+            return Ok(new { message = $"User {user.Username} deleted successfully" });
         }
         
     }
